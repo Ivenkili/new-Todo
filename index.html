@@ -1,154 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>To-do ella</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-        background-color: yellowgreen;
-        margin: 0;
-      }
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-      }
-      .main-cont {
-        background-color: white;
-        padding: 20px;
-        margin-top: 40px;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      .input-area {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      input,
-      select,
-      button {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      button {
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      #todo-list {
-        list-style: none;
-        padding: 0;
-      }
-      li {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        margin-bottom: 10px;
-      }
 
-      .done {
-        text-decoration: line-through;
-        color: gray;
-      }
-      #search-input {
-        padding: 10px;
-        width: 100%;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-      input[type="datetime-local"] {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .task-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      @media (max-width: 600px) {
-  body {
-    padding: 10px;
-    background-color: mediumorchid;
-  }
+<head>
+  <meta charset="UTF-8" />
+  <title>To-do ella</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-  .main-cont {
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 8px;
-  }
+<body>
+  <div class="container">
+    <div class="main-cont">
+      <h1>My To-Do List</h1>
 
-  h1 {
-    font-size: 20px;
-    text-align: center;
-  }
+      <!-- Search Input -->
+      <input type="text" id="search-input" placeholder="Search tasks..." />
 
-  button {
-    font-size: 14px;
-    color: pink;
-  }
-
-  input, select {
-    font-size: 14px;
-  }
-
-  li {
-    font-size: 14px;
-  }
-}
-
-    </style>
-  </head>
-
-  <body>
-    <div class="container">
-      <div class="main-cont">
-        <h1>My To-Do List</h1>
-
-        <!-- Search Input -->
-        <input type="text" id="search-input" placeholder="Search tasks..." />
-
-        <!-- Add Task Area -->
-        <div class="input-area">
-          <input type="text" id="todo-input" placeholder="Enter a task" />
-          <select id="priority-select">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-          <input type="datetime-local" id="deadline-input" />
-          <button id="add-btn">Add Task</button>
-        </div>
-
-        <!-- Task List -->
-        <ul id="todo-list"></ul>
+      <!-- Add Task Area -->
+      <div class="input-area">
+        <input type="text" id="todo-input" placeholder="Enter a task" />
+        <select id="priority-select">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <input type="datetime-local" id="deadline-input" />
+        <button id="add-btn">Add Task</button>
       </div>
+
+      <!-- Task List -->
+      <ul id="todo-list"></ul>
     </div>
+  </div>
+  <footer>
+    <p>© 2025 3lla's To-DO. All Rights Reserved. </p>
+    <p>Made with ❤️ by 3lla</p>
+  </footer>
 
     <script>
       const addBtn = document.getElementById("add-btn");
@@ -158,22 +44,113 @@
       const searchInput = document.getElementById("search-input");
       const deadlineInput = document.getElementById("deadline-input");
 
-      // Add task
+      // Add user task
       addBtn.addEventListener("click", function () {
         const taskText = todoInput.value.trim();
         const priority = prioritySelect.value;
         const deadline = deadlineInput.value;
 
         if (taskText !== "") {
+          addTaskToUI(taskText, priority, deadline);
+          todoInput.value = "";
+          prioritySelect.value = "Low";
+          deadlineInput.value = "";
+        }
+      });
+
+      // Function to create a task and add it to the UI
+      function addTaskToUI(taskText, priority = "Low", deadline = "", completed = false) {
+        const li = document.createElement("li");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = completed;
+
+        const taskSpan = document.createElement("span");
+        taskSpan.textContent = taskText;
+        if (completed) taskSpan.classList.add("done");
+
+        const prioritySpan = document.createElement("span");
+        prioritySpan.style.fontSize = "12px";
+        prioritySpan.style.color =
+          priority === "High"
+            ? "red"
+            : priority === "Medium"
+              ? "orange"
+              : "blue";
+        prioritySpan.textContent = `[${priority}]`;
+
+        const countdown = document.createElement("span");
+        countdown.style.fontSize = "12px";
+        countdown.style.marginLeft = "10px";
+        countdown.style.color = "gray";
+
+        if (deadline) {
+          updateCountdown(countdown, deadline);
+          setInterval(() => updateCountdown(countdown, deadline), 1000);
+        }
+
+        checkbox.addEventListener("change", function () {
+          if (checkbox.checked) {
+            taskSpan.classList.add("done");
+          } else {
+            taskSpan.classList.remove("done");
+          }
+        });
+
+        const taskInfo = document.createElement("div");
+        taskInfo.className = "task-info";
+        taskInfo.appendChild(checkbox);
+        taskInfo.appendChild(taskSpan);
+
+        li.appendChild(taskInfo);
+        li.appendChild(prioritySpan);
+        if (deadline) {
+          li.appendChild(countdown);
+        }
+
+        li.addEventListener("contextmenu", function (e) {
+          e.preventDefault();
+          li.remove();
+        });
+
+        todoList.appendChild(li);
+      }
+
+      // Search tasks
+      searchInput.addEventListener("input", function () {
+        const searchText = searchInput.value.toLowerCase(); const addBtn = document.getElementById("add-btn");
+        const todoInput = document.getElementById("todo-input");
+        const todoList = document.getElementById("todo-list");
+        const prioritySelect = document.getElementById("priority-select");
+        const searchInput = document.getElementById("search-input");
+        const deadlineInput = document.getElementById("deadline-input");
+
+        // Add user task
+        addBtn.addEventListener("click", function () {
+          const taskText = todoInput.value.trim();
+          const priority = prioritySelect.value;
+          const deadline = deadlineInput.value;
+
+          if (taskText !== "") {
+            addTaskToUI(taskText, priority, deadline);
+            todoInput.value = "";
+            prioritySelect.value = "Low";
+            deadlineInput.value = "";
+          }
+        });
+
+        // Function to create a task and add it to the UI
+        function addTaskToUI(taskText, priority = "Low", deadline = "", completed = false) {
           const li = document.createElement("li");
 
-          // Create Checkbox
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
-          checkbox.style.marginRight = "10px";
+          checkbox.checked = completed;
 
           const taskSpan = document.createElement("span");
           taskSpan.textContent = taskText;
+          if (completed) taskSpan.classList.add("done");
 
           const prioritySpan = document.createElement("span");
           prioritySpan.style.fontSize = "12px";
@@ -181,8 +158,8 @@
             priority === "High"
               ? "red"
               : priority === "Medium"
-              ? "orange"
-              : "blue";
+                ? "orange"
+                : "blue";
           prioritySpan.textContent = `[${priority}]`;
 
           const countdown = document.createElement("span");
@@ -192,10 +169,9 @@
 
           if (deadline) {
             updateCountdown(countdown, deadline);
-            setInterval(() => updateCountdown(countdown, deadline), 1000); // Update every second
+            setInterval(() => updateCountdown(countdown, deadline), 1000);
           }
 
-          // Handle checking task
           checkbox.addEventListener("change", function () {
             if (checkbox.checked) {
               taskSpan.classList.add("done");
@@ -215,33 +191,66 @@
             li.appendChild(countdown);
           }
 
-          // Right-click to delete
           li.addEventListener("contextmenu", function (e) {
             e.preventDefault();
             li.remove();
           });
 
           todoList.appendChild(li);
-
-          // Reset inputs
-          todoInput.value = "";
-          prioritySelect.value = "Low";
-          deadlineInput.value = "";
         }
-      });
 
-      // Search tasks
-      searchInput.addEventListener("input", function () {
-        const searchText = searchInput.value.toLowerCase();
+        // Search tasks
+        searchInput.addEventListener("input", function () {
+          const searchText = searchInput.value.toLowerCase();
+          const tasks = document.querySelectorAll("#todo-list li");
+
+          tasks.forEach(function (task) {
+            const taskText = task.textContent.toLowerCase();
+            task.style.display = taskText.includes(searchText) ? "flex" : "none";
+          });
+        });
+
+        // Countdown function
+        function updateCountdown(countdownElement, deadline) {
+          const now = new Date();
+          const deadlineDate = new Date(deadline);
+          const diff = deadlineDate - now;
+
+          if (diff <= 0) {
+            countdownElement.textContent = "⏰ Time's up!";
+            countdownElement.style.color = "red";
+            return;
+          }
+
+          const hours = Math.floor(diff / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+          countdownElement.textContent = `⏳ ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // 🟢 Fetch and display todos from the JSONPlaceholder API
+        function fetchTodosFromAPI() {
+          fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+            .then((response) => response.json())
+            .then((data) => {
+              data.forEach((todo) => {
+                addTaskToUI(todo.title, "Low", "", todo.completed);
+              });
+            })
+            .catch((error) => {
+              console.error("Error fetching todos:", error);
+            });
+        }
+
+        // Call the function when the page loads
+        window.addEventListener("DOMContentLoaded", fetchTodosFromAPI);
+
         const tasks = document.querySelectorAll("#todo-list li");
 
         tasks.forEach(function (task) {
           const taskText = task.textContent.toLowerCase();
-          if (taskText.includes(searchText)) {
-            task.style.display = "flex";
-          } else {
-            task.style.display = "none";
-          }
+          task.style.display = taskText.includes(searchText) ? "flex" : "none";
         });
       });
 
@@ -263,6 +272,24 @@
 
         countdownElement.textContent = `⏳ ${hours}h ${minutes}m ${seconds}s`;
       }
+
+      // 🟢 Fetch and display todos from the JSONPlaceholder API
+      function fetchTodosFromAPI() {
+        fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((todo) => {
+              addTaskToUI(todo.title, "Low", "", todo.completed);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching todos:", error);
+          });
+      }
+
+      // Call the function when the page loads
+      window.addEventListener("DOMContentLoaded", fetchTodosFromAPI);
     </script>
-  </body>
+</body>
+
 </html>
